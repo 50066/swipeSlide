@@ -1,7 +1,7 @@
 /**
  * Zepto swipeSlide Plugin
  * 西门 http://ons.me/500.html
- * 20141007 v2.0
+ * 20141210 v2.1
  */
 
 ;(function($){
@@ -20,6 +20,16 @@
             _loadPicNum = 0,
             firstMovePrev = true,
             $this = $(this),
+            browser = {
+                ie10 : window.navigator.msPointerEnabled,
+                ie11 : window.navigator.pointerEnabled
+            },
+            events = [],
+            support = {
+                touch : (window.Modernizr && Modernizr.touch === true) || (function () {
+                    return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+                })()
+            },
             opts = $.extend({}, {
                 ul : $this.children('ul'),              // 父dom
                 li : $this.children().children('li'),   // 子dom
@@ -35,8 +45,30 @@
             _liLength = opts.li.length,
             callback = callback || function(){};
 
+        // 判断浏览器
+        if (browser.ie10) events = ['MSPointerDown', 'MSPointerMove', 'MSPointerUp'];
+        if (browser.ie11) events = ['pointerdown', 'pointermove', 'pointerup'];
+
+        // 触摸赋值
+        var touchEvents = {
+            touchStart : support.touch ? 'touchstart' : events[0],
+            touchMove : support.touch ? 'touchmove' : events[1],
+            touchEnd : support.touch ? 'touchend' : events[2]
+        };
+
         // 初始化
         (function(){
+            // IE触控
+            if(browser.ie10 || browser.ie11){
+                var action = '';
+                if(opts.axisX){
+                    action = 'pan-y';
+                }else{
+                    action = 'none';
+                }
+                $this.css({'-ms-touch-action':action,'touch-action':action});
+            }
+
             // 连续滚动，需要复制dom
             if(opts.continuousScroll){
                 opts.ul.prepend(opts.li.last().clone()).append(opts.li.first().clone());
@@ -80,17 +112,26 @@
             callback(_index);
 
             // 绑定触摸
-            $this.on('touchstart',function(e){
+            $this.on(touchEvents.touchStart,function(e){
                 fnTouches(e);
                 fnTouchstart(e);
             });
-            $this.on('touchmove',function(e){
-                fnTouches(e);
-                fnTouchmove(e);
-            });
-            $this.on('touchend',function(){
-                fnTouchend();
-            });
+            // if(browser.ie10 || browser.ie11){
+            //     $(document).on(touchEvents.touchMove,function(e){
+            //         fnTouchmove(e);
+            //     });
+            //     $(document).on(touchEvents.touchEnd,function(){
+            //         fnTouchend();
+            //     });
+            // }else{
+                $this.on(touchEvents.touchMove,function(e){
+                    fnTouches(e);
+                    fnTouchmove(e);
+                });
+                $this.on(touchEvents.touchEnd,function(){
+                    fnTouchend();
+                });
+            // }
         })();
 
         // css过渡
@@ -135,25 +176,26 @@
 
         // touches
         function fnTouches(e){
-            if(!e.touches){
+            if(support.touch && !e.touches){
                 e.touches = e.originalEvent.touches;
             }
         }
 
         // touchstart
         function fnTouchstart(e){
-            _startX = e.touches[0].pageX;
-            _startY = e.touches[0].pageY;
+            _startX = support.touch ? e.touches[0].pageX : (e.pageX || e.clientX);
+            _startY = support.touch ? e.touches[0].pageY : (e.pageY || e.clientY);
         }
 
         // touchmove
         function fnTouchmove(e){
-            e.preventDefault();
+            if (e.preventDefault) e.preventDefault();
+            else e.returnValue = false;
             if(opts.autoSwipe){
                 clearInterval(autoScroll);
             }
-            _curX = e.touches[0].pageX;
-            _curY = e.touches[0].pageY;
+            _curX = support.touch ? e.touches[0].pageX : (e.pageX || e.clientX);
+            _curY = support.touch ? e.touches[0].pageY : (e.pageY || e.clientY);
             _moveX = _curX - _startX;
             _moveY = _curY - _startY;
             fnTransition(opts.ul,0);
@@ -189,11 +231,16 @@
             }else{
                 _moveDistance = _moveY;
             }
+            alert(_moveDistance);
             // 距离小
             if(Math.abs(_moveDistance) <= _touchDistance){
                 fnScroll(.3);
             // 距离大
             }else{
+                $this.on('click',function(){
+                    alert(1111);
+                    return false;
+                });
                 // 手指触摸上一屏滚动
                 if(_moveDistance > _touchDistance){
                     fnMovePrev();
@@ -205,6 +252,9 @@
                 }
             }
             _moveX = 0,_moveY = 0;
+            // if(browser.ie10 || browser.ie11){
+
+            // }
         }
 
         // 滚动方法

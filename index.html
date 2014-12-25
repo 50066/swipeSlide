@@ -79,22 +79,22 @@ h2{
 <div class="slide" id="slide1">
     <ul>
         <li>
-            <a href="//m.yhd.com/">
+            <a href="//www.baidu.com/" onfocus="return false">
                 <img src="http://d10.yihaodianimg.com/V00/M03/4D/41/CgQDsVQG4d6AISZPAAFa7N3KyPY18100.jpg" alt="">
             </a>
         </li>
         <li>
-            <a href="//www.baidu.com/">
+            <a href="//www.baidu.com/" onfocus="return false">
                 <img src="http://d10.yihaodianimg.com/V00/M04/32/59/CgQDsVQDEtaAVv4BAAEFc6n3fws75000.jpg" alt="">
             </a>
         </li>
         <li>
-            <a href="//m.taobao.com/">
+            <a href="//m.taobao.com/" onfocus="return false">
                 <img src="http://d11.yihaodianimg.com/N05/M04/82/EC/CgQI01QEHoiAFBbgAAC9du5zOPc62900.jpg" alt="">
             </a>
         </li>
         <li>
-            <a href="//www.qq.com/">
+            <a href="//www.qq.com/" onfocus="return false">
                 <img src="http://d10.yihaodianimg.com/N07/M09/26/8B/CgQI0FQFd8-ACrb7AADBtSan3a084000.jpg" alt="">
             </a>
         </li>
@@ -169,24 +169,24 @@ h2{
 
 <script src="js/zepto.min.js"></script>
 <!-- <script src="js/jquery.min.js"></script> -->
-<script src="js/swipeSlide.min.js"></script>
+<script src="js/swipeSlide.js"></script>
 <script>
 $(function(){
     $('#slide1').swipeSlide();
 
-    $('#slide2').swipeSlide({
-        autoSwipe : false,
-        continuousScroll:true,
-        lazyLoad : true
-    });
+    // $('#slide2').swipeSlide({
+    //     autoSwipe : false,
+    //     continuousScroll:true,
+    //     lazyLoad : true
+    // });
 
-    $('#slide3').swipeSlide({
-        continuousScroll:true,
-        speed : 3000,
-        transitionType : 'cubic-bezier(0.22, 0.69, 0.72, 0.88)'
-    },function(i){
-        $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
-    });
+    // $('#slide3').swipeSlide({
+    //     continuousScroll:true,
+    //     speed : 3000,
+    //     transitionType : 'cubic-bezier(0.22, 0.69, 0.72, 0.88)'
+    // },function(i){
+    //     $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
+    // });
 });
 </script>
 </body>
