@@ -123,22 +123,13 @@
                 fnTouches(e);
                 fnTouchstart(e);
             });
-            // if(browser.ie10 || browser.ie11){
-            //     $(document).on(touchEvents.touchMove,function(e){
-            //         fnTouchmove(e);
-            //     });
-            //     $(document).on(touchEvents.touchEnd,function(){
-            //         fnTouchend();
-            //     });
-            // }else{
-                $this.on(touchEvents.touchMove,function(e){
-                    fnTouches(e);
-                    fnTouchmove(e);
-                });
-                $this.on(touchEvents.touchEnd,function(){
-                    fnTouchend();
-                });
-            // }
+            $this.on(touchEvents.touchMove,function(e){
+                fnTouches(e);
+                fnTouchmove(e);
+            });
+            $this.on(touchEvents.touchEnd,function(){
+                fnTouchend();
+            });
         })();
 
         // css过渡
