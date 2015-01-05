@@ -174,19 +174,19 @@ h2{
 $(function(){
     $('#slide1').swipeSlide();
 
-    // $('#slide2').swipeSlide({
-    //     autoSwipe : false,
-    //     continuousScroll:true,
-    //     lazyLoad : true
-    // });
+    $('#slide2').swipeSlide({
+        autoSwipe : false,
+        continuousScroll:true,
+        lazyLoad : true
+    });
 
-    // $('#slide3').swipeSlide({
-    //     continuousScroll:true,
-    //     speed : 3000,
-    //     transitionType : 'cubic-bezier(0.22, 0.69, 0.72, 0.88)'
-    // },function(i){
-    //     $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
-    // });
+    $('#slide3').swipeSlide({
+        continuousScroll:true,
+        speed : 3000,
+        transitionType : 'cubic-bezier(0.22, 0.69, 0.72, 0.88)'
+    },function(i){
+        $('.dot').children().eq(i).addClass('cur').siblings().removeClass('cur');
+    });
 });
 </script>
 </body>

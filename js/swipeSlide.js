@@ -12,6 +12,8 @@
             _startY = 0,
             _moveX = 0,
             _moveY = 0,
+            _moveResultX = 0,
+            _moveResultY = 0,
             _moveDistance = 0,
             _curX = 0,
             _curY = 0,
@@ -19,6 +21,7 @@
             _touchDistance = 50,
             _loadPicNum = 0,
             firstMovePrev = true,
+            allowSlideClick = true,
             $this = $(this),
             browser = {
                 ie10 : window.navigator.msPointerEnabled,
@@ -111,6 +114,10 @@
             // 回调
             callback(_index);
 
+            $this.on('click',function(){
+                return allowSlideClick;
+            });
+
             // 绑定触摸
             $this.on(touchEvents.touchStart,function(e){
                 fnTouches(e);
@@ -194,53 +201,58 @@
             if(opts.autoSwipe){
                 clearInterval(autoScroll);
             }
+            allowSlideClick = false;
             _curX = support.touch ? e.touches[0].pageX : (e.pageX || e.clientX);
             _curY = support.touch ? e.touches[0].pageY : (e.pageY || e.clientY);
-            _moveX = _curX - _startX;
-            _moveY = _curY - _startY;
+            _moveX = _moveResultX = _curX - _startX;
+            _moveY = _moveResultY = _curY - _startY;
             fnTransition(opts.ul,0);
             if(opts.axisX){
                 if(!opts.continuousScroll){
-                    if(_index == 0 && _moveX > 0){
-                        _moveX = 0;
+                    if(_index == 0 && _moveResultX > 0){
+                        _moveResultX = 0;
                         return fnAutoSwipe();
-                    }else if((_index + 1) >= _liLength && _moveX < 0){
-                        _moveX = 0;
+                    }else if((_index + 1) >= _liLength && _moveResultX < 0){
+                        _moveResultX = 0;
                         return fnAutoSwipe();
                     }
                 }
-                fnTranslate(opts.ul,-(_liWidth * (parseInt(_index)) - _moveX));
+                fnTranslate(opts.ul,-(_liWidth * (parseInt(_index)) - _moveResultX));
             }else{
                 if(!opts.continuousScroll){
-                    if(_index == 0 && _moveY > 0){
-                        _moveY = 0;
+                    if(_index == 0 && _moveResultY > 0){
+                        _moveResultY = 0;
                         return fnAutoSwipe();
-                    }else if((_index + 1) >= _liLength && _moveY < 0){
-                        _moveY = 0;
+                    }else if((_index + 1) >= _liLength && _moveResultY < 0){
+                        _moveResultY = 0;
                         return fnAutoSwipe();
                     }
                 }
-                fnTranslate(opts.ul,-(_liHeight * (parseInt(_index)) - _moveY));
+                fnTranslate(opts.ul,-(_liHeight * (parseInt(_index)) - _moveResultY));
             }
         }
 
         // touchend
         function fnTouchend(){
             if(opts.axisX){
-                _moveDistance = _moveX;
+                _moveDistance = _moveResultX;
             }else{
-                _moveDistance = _moveY;
+                _moveDistance = _moveResultY;
             }
-            alert(_moveDistance);
+
+            // 解决IE滑动触发click
+            if(Math.abs(_moveX) < 5){
+                allowSlideClick = true;
+            }
+            setTimeout(function(){
+                allowSlideClick = true;
+            },100);
+
             // 距离小
             if(Math.abs(_moveDistance) <= _touchDistance){
                 fnScroll(.3);
             // 距离大
             }else{
-                $this.on('click',function(){
-                    alert(1111);
-                    return false;
-                });
                 // 手指触摸上一屏滚动
                 if(_moveDistance > _touchDistance){
                     fnMovePrev();
@@ -251,10 +263,7 @@
                     fnAutoSwipe();
                 }
             }
-            _moveX = 0,_moveY = 0;
-            // if(browser.ie10 || browser.ie11){
-
-            // }
+            _moveX = _moveResultX = 0,_moveY = _moveResultY = 0;
         }
 
         // 滚动方法
